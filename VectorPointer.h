@@ -2,69 +2,81 @@
 #include <iostream>
 #include <stdexcept>  // For std::out_of_range
 
-template <class T>
-class Vector {
+template <typename T>
+class VectorPointer {
 private:
     unsigned int m_size; // Array size
-    T* m_data; // Array pointer
+    T** m_data; // Array pointer
 
 public:
     // Constructor
-    Vector(unsigned int Size = 0, T init = T())
-        : m_size(Size), m_data(new T[Size]) 
+    VectorPointer(unsigned int size = 0, T init = T())
+        : m_size(size) 
     {
+        m_data = new T * [m_size];
         for (size_t i = 0; i < m_size; ++i) {
-            m_data[i] = init;
+            m_data[i] = new T(init);
         }
     }
 
     // Copy constructor
-    Vector(const Vector& other)
-        : m_size(other.m_size), m_data(new T[other.m_size]) 
-    {
+    VectorPointer(const VectorPointer& other)
+        : m_size(other.m_size) {
+        m_data = new T * [m_size];
         for (size_t i = 0; i < m_size; ++i) {
-            m_data[i] = other.m_data[i];
+            m_data[i] = new T(*other.m_data[i]);
         }
     }
 
     // Move constructor
-    Vector(Vector&& other) noexcept
-        : m_size(other.m_size), m_data(other.m_data) 
-    {
+    VectorPointer(VectorPointer&& other) noexcept
+        : m_size(other.m_size), m_data(other.m_data) {
         other.m_size = 0;
         other.m_data = nullptr;
     }
 
     // Copy assignment operator
-    Vector& operator=(const Vector& other) 
-    {
+    VectorPointer& operator=(const VectorPointer& other) {
         if (this != &other) {
-            T* newData = new T[other.m_size];
-            for (size_t i = 0; i < other.m_size; ++i) {
-                newData[i] = other.m_data[i];
+            // Clean up old resources
+            for (size_t i = 0; i < m_size; ++i) {
+                delete m_data[i];
             }
             delete[] m_data;
-            m_data = newData;
+
+            // Allocate new resources
             m_size = other.m_size;
+            m_data = new T * [m_size];
+            for (size_t i = 0; i < m_size; ++i) {
+                m_data[i] = new T(*other.m_data[i]);
+            }
         }
         return *this;
     }
 
     // Move assignment operator
-    Vector& operator=(Vector&& other) noexcept 
-    {
+    VectorPointer& operator=(VectorPointer&& other) noexcept {
         if (this != &other) {
+            // Clean up old resources
+            for (size_t i = 0; i < m_size; ++i) {
+                delete m_data[i];
+            }
             delete[] m_data;
-            m_data = other.m_data;
+
+            // Transfer resources from other
             m_size = other.m_size;
-            other.m_data = nullptr;
+            m_data = other.m_data;
             other.m_size = 0;
+            other.m_data = nullptr;
         }
         return *this;
     }
 
     // Destructor
-    ~Vector() {
+    ~VectorPointer() {
+        for (size_t i = 0; i < m_size; ++i) {
+            delete m_data[i];
+        }
         delete[] m_data;
     }
 
@@ -75,12 +87,18 @@ public:
 
     // Resize the vector
     void Resize(unsigned int newSize, T init = T()) {
-        if (newSize == m_size) return;
-
-        T* temp = new T[newSize];
+        T** temp = new T * [newSize];
         for (size_t i = 0; i < newSize; ++i) {
-            if (i < m_size) temp[i] = m_data[i];
-            else temp[i] = init;
+            if (i < m_size) {
+                temp[i] = new T(*m_data[i]);
+            }
+            else {
+                temp[i] = new T(init);
+            }
+        }
+        // Clean up old resources
+        for (size_t i = 0; i < m_size; ++i) {
+            delete m_data[i];
         }
         delete[] m_data;
         m_data = temp;
@@ -90,7 +108,7 @@ public:
     // Add an element at the end
     void PushBack(T value) {
         Resize(m_size + 1);
-        m_data[m_size - 1] = value;
+        *m_data[m_size - 1] = value;
     }
 
     // Insert an element at a specific position
@@ -100,9 +118,9 @@ public:
         }
         Resize(m_size + 1);
         for (size_t i = m_size - 1; i > index; --i) {
-            m_data[i] = m_data[i - 1];
+            *m_data[i] = *m_data[i - 1];
         }
-        m_data[index] = value;
+        *m_data[index] = value;
     }
 
     // Remove an element at a specific position
@@ -111,7 +129,7 @@ public:
             throw std::out_of_range("Index out of bounds");
         }
         for (size_t i = index; i < m_size - 1; ++i) {
-            m_data[i] = m_data[i + 1];
+            *m_data[i] = *m_data[i + 1];
         }
         Resize(m_size - 1);
     }
@@ -126,22 +144,8 @@ public:
         if (index >= static_cast<int>(m_size) || index < 0) {
             throw std::out_of_range("Array index out of bounds");
         }
-        return m_data[index];
+        return *m_data[index];
     }
 
-    // Access element by index (const version)
-    const T& operator[](int index) const {
-        if (index >= static_cast<int>(m_size) || index < 0) {
-            throw std::out_of_range("Array index out of bounds");
-        }
-        return m_data[index];
-    }
-    // return the size of whole array in mage bytes
-    unsigned int GetSizeOfAllEements()
-    {
-        unsigned int result = sizeof(T) * m_size;// in bytes
-        result /= 1024; // in kilo bytes
-        result /= 1024; // in mega Bytes
-        return result;
-    }
+    
 };

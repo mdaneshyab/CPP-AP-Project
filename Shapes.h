@@ -1,201 +1,224 @@
 #pragma once
-
 #include <iostream>
 #include <array>
+#include <memory>
+#include <vector>
 #define M_PI 3.14159265358979323846
-class  Shape
+
+class Shape
 {
 public:
-     Shape() {}
-     ~Shape() { }
-     virtual double GetVolume()
-     { 
-         EvalVoulme();
-         return m_Volume;
-     }
-     
-private:
-    double EvalVoulme() {return m_Volume = -1; }
-    double m_Volume;
+    Shape() {}
+    virtual ~Shape() {}
+    virtual double GetVolume() const
+    {
+        return -1;
+    }
+
+    
+
 };
 
 
-class Cube :public Shape{
 
+class Cube : public Shape
+{
 public:
-    
-    Cube(double A=0, double B=0, double C=0) :
-        m_A(A), m_B(B), m_C(C) 
+    Cube(double A = 0, double B = 0, double C = 0)
+        : m_A(A), m_B(B), m_C(C)
     {
-        
         EvalVolume();
     }
-    ~Cube() {  }
+    ~Cube() {}
 
-    double GetVolume()override 
-    { return m_Volume; }
-    std::array<double, 3> GetAll() 
+    double GetVolume() const override
     {
-        std::array<double, 3> tmp ;
-        tmp[0] = m_A;
-        tmp[1] = m_B;
-        tmp[2] = m_C;
-        return tmp;
+        return m_Volume;
     }
-    void SetAll(double _A, double _B, double _C) {
-        m_A = _A;
-        m_B = _B;
-        m_C = _C;
+    std::array<double, 3> GetAll() const
+    {
+        return { m_A, m_B, m_C };
+    }
+    void SetAll(double A, double B, double C)
+    {
+        m_A = A;
+        m_B = B;
+        m_C = C;
         EvalVolume();
     }
-    void SetA(double x) {
+    void SetA(double x)
+    {
         m_A = x;
         EvalVolume();
     }
-    void SetB(double x) {
+    void SetB(double x)
+    {
         m_B = x;
         EvalVolume();
     }
-    void SetC(double x) {
+    void SetC(double x)
+    {
         m_C = x;
         EvalVolume();
     }
-    const double& GetA() {
+    const double& GetA() const
+    {
         return m_A;
     }
-    const double& GetB() {
+    const double& GetB() const
+    {
         return m_B;
     }
-    const double& GetC() {
+    const double& GetC() const
+    {
         return m_C;
     }
-private:
-    void EvalVolume() {
-        m_Volume = m_A * m_B * m_C;
-
-    }
-    double m_A, m_B, m_C, m_Volume;
-};
-
-std::ostream& operator<< (std::ostream& out, Cube& a)
-{
- 
-    out << "Cube("<< a.GetA() ;
-    out << ',' << a.GetB();
-    out << ',' << a.GetC();
-    out << ")";
-
-    return out;
-}
-
-class Sphere :public Shape
-{
-public:
-    
-    Sphere(double Radious=0)
+    friend std::ostream& operator<<(std::ostream& out, const Cube& a)
     {
-        m_Radious = Radious;
-        EvalVolume();
+        out << "Cube(" << a.m_A <<','<< a.m_B<<','<< a.m_C << ')';
+        return out;
     }
-    double GetRadious() { return m_Radious; }
-    double GetVolume() override { return m_Volume; }
-    void SetRaious(double Radious)
-    {
-        m_Radious = Radious;
-        EvalVolume();
-    }
-
-    
-
-private:
-    void EvalVolume() {
-        m_Volume = (4*M_PI/3) * m_Radious* m_Radious * m_Radious;
-
-    }
-    double m_Radious;
-    double m_Volume;
-};
-
-std::ostream& operator<< (std::ostream& out, Sphere& a)
-{
-
-    out << "Sphere(" << a.GetRadious() << ')';
-    return out;
-}
-
-class Cylinder : public Shape
-{
-public:
-    Cylinder(double Height=0 , double Radious=0)
-        :m_Height(Height),m_Radious(Radious)
-    {
-        EvalVolume();
-    }
-    double GetHeight() { return m_Height; }
-    double GetRadious() { return m_Radious; }
-    void SetRadious(double Radious) 
-    { 
-        m_Radious = Radious;
-        EvalVolume();
-    }
-    void SetHeight(double Height)
-    { 
-        m_Height = Height; 
-        EvalVolume();
-    }
-    double GetVolume() override { return m_Volume; }
 
 private:
     void EvalVolume()
     {
-        m_Volume = M_PI * m_Radious * m_Radious * m_Height;
+        m_Volume = m_A * m_B * m_C;
     }
-    double m_Height, m_Radious;
-    double m_Volume;
 
+    double m_A, m_B, m_C, m_Volume;
 };
-std::ostream& operator<< (std::ostream& out, Cylinder& a)
-{
 
-    out << "Cylinder(" << a.GetHeight() << ',' << a.GetRadious() << ')';
-    return out;
-}
-class Pyramid: public Shape
+class Sphere : public Shape
 {
 public:
-    Pyramid(double Height=0, double Width=0)
+    Sphere(double radius = 0)
+        : m_Radius(radius)
     {
-        m_Height = Height;
-        m_Width = Width;
         EvalVolume();
     }
-    double GetHeight() { return m_Height; }
-    double GetWidth() { return m_Width; }
-    void SetWidth(double Width)
+    ~Sphere() {}
+
+    double GetVolume() const override
     {
-        m_Width = Width;
+        return m_Volume;
+    }
+    double GetRadius() const
+    {
+        return m_Radius;
+    }
+    void SetRadius(double radius)
+    {
+        m_Radius = radius;
         EvalVolume();
     }
-    void SetHeight(double Height)
+    friend std::ostream& operator<<(std::ostream& out, const Sphere& a)
     {
-        m_Height = Height;
+         out << "Sphere(" << a.m_Radius << ')';
+         return out;
+    }
+
+
+private:
+    void EvalVolume()
+    {
+        m_Volume = (4 * M_PI / 3) * m_Radius * m_Radius * m_Radius;
+    }
+
+    double m_Radius, m_Volume;
+};
+
+class Cylinder : public Shape
+{
+public:
+    Cylinder(double height = 0, double radius = 0)
+        : m_Height(height), m_Radius(radius)
+    {
         EvalVolume();
     }
-    double GetVolume() override { return m_Volume; }
+    ~Cylinder() {}
+
+    double GetVolume() const override
+    {
+        return m_Volume;
+    }
+    double GetHeight() const
+    {
+        return m_Height;
+    }
+    double GetRadius() const
+    {
+        return m_Radius;
+    }
+    void SetHeight(double height)
+    {
+        m_Height = height;
+        EvalVolume();
+    }
+    void SetRadius(double radius)
+    {
+        m_Radius = radius;
+        EvalVolume();
+    }
+    friend std::ostream& operator<<(std::ostream& out, const Cylinder& a)
+    {
+        out << "Cylinder(" << a.m_Height << ',' << a.m_Radius << ')';
+        return out;
+    }
+
+
+private:
+    void EvalVolume()
+    {
+        m_Volume = M_PI * m_Radius * m_Radius * m_Height;
+    }
+
+    double m_Height, m_Radius, m_Volume;
+};
+
+class Pyramid : public Shape
+{
+public:
+    Pyramid(double height = 0, double width = 0)
+        : m_Height(height), m_Width(width)
+    {
+        EvalVolume();
+    }
+    ~Pyramid() {}
+
+    double GetVolume() const override
+    {
+        return m_Volume;
+    }
+    double GetHeight() const
+    {
+        return m_Height;
+    }
+    double GetWidth() const
+    {
+        return m_Width;
+    }
+    void SetHeight(double height)
+    {
+        m_Height = height;
+        EvalVolume();
+    }
+    void SetWidth(double width)
+    {
+        m_Width = width;
+        EvalVolume();
+    }
+    friend std::ostream& operator<<(std::ostream& out, const Pyramid& a)
+    {
+        out << "Pyramid(" << a.m_Height << ',' << a.m_Width << ')';
+        return out;
+    }
+
 
 private:
     void EvalVolume()
     {
         m_Volume = (m_Width * m_Width * m_Height) / 3;
     }
-    double m_Width, m_Height;
-    double m_Volume;
+
+    double m_Height, m_Width, m_Volume;
 };
-
-std::ostream& operator<< (std::ostream& out, Pyramid& a)
-{
-
-    out << "Cylinder(" << a.GetHeight()<<',' << a.GetWidth() << ')';
-    return out;
-}
-
