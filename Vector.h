@@ -137,9 +137,9 @@ public:
         return m_data[index];
     }
     // return the size of whole array in mage bytes
-    unsigned int GetSizeOfAllEements()
+    double GetSizeOfAllEements()
     {
-        unsigned int result = sizeof(T) * m_size;// in bytes
+        double result = sizeof(T) * m_size;// in bytes
         result /= 1024; // in kilo bytes
         result /= 1024; // in mega Bytes
         return result;

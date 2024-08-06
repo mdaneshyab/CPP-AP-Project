@@ -1,19 +1,16 @@
 #pragma once
-#include <chrono>
-#include <thread>
+#include <ctime>
 #include <iostream>
+
 class Timer
 {
-    // make things readable
-    using clk = std::chrono::steady_clock;
-
-    clk::time_point b; // begin
-    clk::time_point e; // end
+    std::clock_t b; // begin
+    std::clock_t e; // end
 
 public:
-    void clear() { b = e = clk::now(); }
-    void start() { b = clk::now(); }
-    void stop() { e = clk::now(); }
+    void clear() { b = e = std::clock(); }
+    void start() { b = std::clock(); }
+    void stop() { e = std::clock(); }
 
     friend std::ostream& operator<< (std::ostream& o, const Timer& timer)
     {
@@ -25,7 +22,6 @@ public:
     {
         if (e <= b)
             return 0.0;
-        auto d = std::chrono::duration_cast<std::chrono::milliseconds>(e - b);
-        return d.count();
+        return 1000.0 * (e - b) / CLOCKS_PER_SEC;
     }
 };

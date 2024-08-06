@@ -147,5 +147,12 @@ public:
         return *m_data[index];
     }
 
-    
+    // return the size of whole array in mage bytes
+    double GetSizeOfAllEements()
+    {
+        double result = sizeof(T) * m_size;// in bytes
+        result /= 1024; // in kilo bytes
+        result /= 1024; // in mega Bytes
+        return result;
+    }
 };
