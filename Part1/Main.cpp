@@ -1,183 +1,127 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
-#include <numeric>
+#include <stdexcept>
+
 #include "Vector.h"
 #include "VectorPointer.h"
 #include "Timer.h"
-#define Samplecount 20
+#define Samplecount  5
+#define ArrayTotalSize  100 // in MB
+
+
 // Helper function to generate a large object
 struct LargeObject {
     std::vector<char> data;
-    LargeObject(size_t size_in_mb = 1) : data(size_in_mb * 1024 *1024) {}
+    LargeObject(size_t size_in_mb = 1) : data(size_in_mb * 1024 * 1024) {}
 };
 
-// Struct to hold object size and count pairs
+// Struct to hold object  pairs
 struct vec2 {
-    int x; // Object size in MB
-    int y; // Number of objects
+    int x; 
+    int y; 
 };
 
-void ShowBar(int length, double percent)
+void ShowBar(int length, double percent) 
 {
     std::cout << '\r' << '|';
-    for (size_t i = 0; i < length; i++)
-    {
-
-        if (i < percent / 100 * length) std::cout << '*';
+    int filledLength = static_cast<int>(percent / 100 * length);
+    for (int i = 0; i < length; i++) {
+        if (i < filledLength) std::cout << '*';
         else std::cout << '_';
     }
-    std::cout  << '|' << percent << '%';
-}
-
-// Function to run the tests
-template <typename VectorType>
-void run_test( std::vector<double>& insert_times, std::vector<double>& remove_times,
-                                unsigned int object_size_in_mb, unsigned int num_objects,
-                                unsigned int sample_count) 
-{
-
-    VectorType vec(num_objects, LargeObject(object_size_in_mb));
-    Timer timer;
-
-    
-    for (unsigned int i = 1; i <= sample_count; ++i) {
-        ShowBar(50, ((double)i / sample_count) * 100 ) ;
-        // Measure insert times
-        timer.start();
-        vec.Insert(0, LargeObject(object_size_in_mb));
-        timer.stop();
-        insert_times.push_back(timer.milliseconds());
-        // Measure remove times
-        timer.start();
-        vec.Remove(0);
-        timer.stop();
-        remove_times.push_back(timer.milliseconds());
-    }
-
-    
-    
+    std::cout << '|' << percent << '%' << std::flush;
 }
 
 int main() {
-    //Test 01
-    {
+
+
     // Generate test cases
     std::vector<vec2> sizes_and_counts;
-    for (int j = 1; j <= 50; j++)
-    {
-        
-        vec2 th = { j, 100 / j };
+    for (int j = 1; j <= ArrayTotalSize / 3; j++) {
+        vec2 th = { j, ArrayTotalSize / j };
         sizes_and_counts.push_back(th);
-        
     }
 
     // Vectors to store average times
-    std::vector<std::vector<double>> vector_insert_averages;
-    std::vector<std::vector<double>> vector_remove_averages;
-    std::vector<std::vector<double>> vector_pointer_insert_averages;
-    std::vector<std::vector<double>> vector_pointer_remove_averages;
+    std::vector<double> vector_insert_averages;
+    std::vector<double> vector_remove_averages;
+    std::vector<double> vector_pointer_insert_averages;
+    std::vector<double> vector_pointer_remove_averages;
 
     for (const auto& size_count : sizes_and_counts) {
-        std::vector<double> vector_insert_times;
-        std::vector<double> vector_remove_times;
-        std::vector<double> vector_pointer_insert_times;
-        std::vector<double> vector_pointer_remove_times;
         
-        std::cout << "Running test for Vector with object size " << size_count.x << "MB and " << size_count.y << " objects..." << std::endl;
-        run_test<Vector<LargeObject>>( vector_insert_times, vector_remove_times, size_count.x, size_count.y, Samplecount);
-        std::cout << std::endl;
+        double insert_times_vector=0;
+        double remove_times_vecotr=0;
+        double insert_times_vectorPointer=0;
+        double remove_times_vecotrPointer=0;
 
-        std::cout << "Running test for VectorPointer with object size " << size_count.x << "MB and " << size_count.y << " objects..." << std::endl;
-        run_test<VectorPointer<LargeObject>>( vector_pointer_insert_times, vector_pointer_remove_times, size_count.x, size_count.y, Samplecount);
-        std::cout << std::endl << std::endl;
+        std::cout << "Running test case with object size " << size_count.x << "MB and " << size_count.y << " objects:" << std::endl;
+        for (size_t i = 1; i <= Samplecount; i++)
+        {
+            ShowBar(50,(double)i/Samplecount*100);
+            Vector<LargeObject> t1(size_count.y,LargeObject(size_count.x));
+            VectorPointer<LargeObject> t2(size_count.y,LargeObject(size_count.x));
+            Timer timer;
 
-        vector_insert_averages.push_back(vector_insert_times);
-        vector_remove_averages.push_back(vector_remove_times);
-        vector_pointer_insert_averages.push_back(vector_pointer_insert_times);
-        vector_pointer_remove_averages.push_back(vector_pointer_remove_times);
+
+            timer.start();
+            t1.Insert(0, LargeObject(size_count.x));
+            timer.stop();
+            insert_times_vector+=timer.milliseconds();
+            
+            timer.start();
+            t1.Remove(0);
+            timer.stop();
+            remove_times_vecotr+=timer.milliseconds();
+
+            
+            timer.start();
+            t2.Insert(0, LargeObject(size_count.x));
+            timer.stop();
+            insert_times_vectorPointer+=timer.milliseconds();
+
+            timer.start();
+            t2.Remove(0);
+            timer.stop();
+            remove_times_vecotrPointer+=timer.milliseconds();
+
+        }
+        
+        std::cout<< std::endl;
+
+
+        
+        vector_insert_averages.push_back(insert_times_vector/Samplecount);
+        vector_remove_averages.push_back(remove_times_vecotr/Samplecount);
+        vector_pointer_insert_averages.push_back(insert_times_vectorPointer/Samplecount);
+        vector_pointer_remove_averages.push_back(remove_times_vecotrPointer/Samplecount);
+
+        
+
     }
 
+
     // Write results to CSV file
-    std::ofstream csv_file("PerformanceResults1.csv");
-    csv_file << "ObjectSizeMB,Vector Count,Vector Insert,Vector Remove,VectorPointer Insert,VectorPointer Remove\n";
+    std::string fileName= "PerformanceResults";
+    std::ofstream csv_file(fileName+".csv");
+    csv_file << "Object Size (MB),Vector Count,Vector Insert,Vector Remove,VectorPointer Insert,VectorPointer Remove\n";
 
     for (size_t i = 0; i < sizes_and_counts.size(); ++i) {
-        double vector_insert_avg = std::accumulate(vector_insert_averages[i].begin(), vector_insert_averages[i].end(), 0.0) / vector_insert_averages[i].size();
-        double vector_remove_avg = std::accumulate(vector_remove_averages[i].begin(), vector_remove_averages[i].end(), 0.0) / vector_remove_averages[i].size();
-        double vector_pointer_insert_avg = std::accumulate(vector_pointer_insert_averages[i].begin(), vector_pointer_insert_averages[i].end(), 0.0) / vector_pointer_insert_averages[i].size();
-        double vector_pointer_remove_avg = std::accumulate(vector_pointer_remove_averages[i].begin(), vector_pointer_remove_averages[i].end(), 0.0) / vector_pointer_remove_averages[i].size();
+        
 
-        csv_file << sizes_and_counts[i].x << "," 
-            << sizes_and_counts[i].y << ","
-            << vector_insert_avg << ","
-            << vector_remove_avg << ","
-            << vector_pointer_insert_avg << ","
-            << vector_pointer_remove_avg << "\n";
+        csv_file << sizes_and_counts[i].x << ","
+                    << sizes_and_counts[i].y << ","
+                    << vector_insert_averages[i] << ","
+                    << vector_remove_averages[i] << ","
+                    << vector_pointer_insert_averages[i] << ","
+                    << vector_pointer_remove_averages[i] << "\n";
     }
 
     csv_file.close();
-    std::cout << "Performance results written to PerformanceResults1.csv\n";
-    }
+    std::cout << "Performance results written to PerformanceResults1"<< fileName<<".csv\n";
+    
+    
 
-    //Test 02
-    {
-        // Generate test cases
-        std::vector<vec2> sizes_and_counts;
-        for (int j = 1; j <= 50; j++)
-        {
-
-            vec2 th = { j, 50 };
-            sizes_and_counts.push_back(th);
-
-        }
-
-        // Vectors to store average times
-        std::vector<std::vector<double>> vector_insert_averages;
-        std::vector<std::vector<double>> vector_remove_averages;
-        std::vector<std::vector<double>> vector_pointer_insert_averages;
-        std::vector<std::vector<double>> vector_pointer_remove_averages;
-
-        for (const auto& size_count : sizes_and_counts) {
-            std::vector<double> vector_insert_times;
-            std::vector<double> vector_remove_times;
-            std::vector<double> vector_pointer_insert_times;
-            std::vector<double> vector_pointer_remove_times;
-
-            std::cout << "Running test for Vector with object size " << size_count.x << "MB and " << size_count.y << " objects..." << std::endl;
-            run_test<Vector<LargeObject>>(vector_insert_times, vector_remove_times, size_count.x, size_count.y, Samplecount);
-            std::cout << std::endl;
-
-            std::cout << "Running test for VectorPointer with object size " << size_count.x << "MB and " << size_count.y << " objects..." << std::endl;
-            run_test<VectorPointer<LargeObject>>(vector_pointer_insert_times, vector_pointer_remove_times, size_count.x, size_count.y, Samplecount);
-            std::cout << std::endl << std::endl;
-
-            vector_insert_averages.push_back(vector_insert_times);
-            vector_remove_averages.push_back(vector_remove_times);
-            vector_pointer_insert_averages.push_back(vector_pointer_insert_times);
-            vector_pointer_remove_averages.push_back(vector_pointer_remove_times);
-        }
-
-        // Write results to CSV file
-        std::ofstream csv_file("PerformanceResults2.csv");
-        csv_file << "ObjectSizeMB,Vector Count,Vector Insert,Vector Remove,VectorPointer Insert,VectorPointer Remove\n";
-
-        for (size_t i = 0; i < sizes_and_counts.size(); ++i) {
-            double vector_insert_avg = std::accumulate(vector_insert_averages[i].begin(), vector_insert_averages[i].end(), 0.0) / vector_insert_averages[i].size();
-            double vector_remove_avg = std::accumulate(vector_remove_averages[i].begin(), vector_remove_averages[i].end(), 0.0) / vector_remove_averages[i].size();
-            double vector_pointer_insert_avg = std::accumulate(vector_pointer_insert_averages[i].begin(), vector_pointer_insert_averages[i].end(), 0.0) / vector_pointer_insert_averages[i].size();
-            double vector_pointer_remove_avg = std::accumulate(vector_pointer_remove_averages[i].begin(), vector_pointer_remove_averages[i].end(), 0.0) / vector_pointer_remove_averages[i].size();
-
-            csv_file << sizes_and_counts[i].x << ","
-                << sizes_and_counts[i].y << ","
-                << vector_insert_avg << ","
-                << vector_remove_avg << ","
-                << vector_pointer_insert_avg << ","
-                << vector_pointer_remove_avg << "\n";
-        }
-
-        csv_file.close();
-        std::cout << "Performance results written to PerformanceResults2.csv\n";
-    }
     return 0;
 }
