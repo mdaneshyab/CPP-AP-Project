@@ -86,18 +86,18 @@ public:
     }
 
     // Resize the vector
-    void Resize(unsigned int newSize, T init = T()) {
+    void  Resize(unsigned int newSize, T init = T()) {
         T** temp = new T * [newSize];
         for (size_t i = 0; i < newSize; ++i) {
             if (i < m_size) {
-                temp[i] = new T(*m_data[i]);
+                temp[i] = m_data[i];
             }
             else {
                 temp[i] = new T(init);
             }
         }
         // Clean up old resources
-        for (size_t i = 0; i < m_size; ++i) {
+        for (size_t i = newSize; i < m_size; ++i) {
             delete m_data[i];
         }
         delete[] m_data;
@@ -108,7 +108,7 @@ public:
     // Add an element at the end
     void PushBack(T value) {
         Resize(m_size + 1);
-        *m_data[m_size - 1] = value;
+        *m_data[m_size - 1] = new T(value);
     }
 
     // Insert an element at a specific position
@@ -118,9 +118,9 @@ public:
         }
         Resize(m_size + 1);
         for (size_t i = m_size - 1; i > index; --i) {
-            *m_data[i] = *m_data[i - 1];
+            m_data[i] = m_data[i - 1];
         }
-        *m_data[index] = value;
+        m_data[index] =new T(value);
     }
 
     // Remove an element at a specific position
@@ -128,10 +128,11 @@ public:
         if (index >= m_size) {
             throw std::out_of_range("Index out of bounds");
         }
+        delete m_data[index];
         for (size_t i = index; i < m_size - 1; ++i) {
-            *m_data[i] = *m_data[i + 1];
+            m_data[i] = m_data[i + 1];
         }
-        Resize(m_size - 1);
+        m_size--;
     }
 
     // Clear the vector
