@@ -6,7 +6,7 @@
 #include "Vector.h"
 #include "VectorPointer.h"
 #include "Timer.h"
-#define Samplecount  5
+#define Samplecount  10
 #define ArrayTotalSize  100 // in MB
 
 
@@ -103,7 +103,7 @@ int main() {
 
         }
 
-        std::cout << std::endl;
+        
 
         
 
@@ -116,12 +116,12 @@ int main() {
         vector_std_insert_averages.push_back(insert_times_vector_std / Samplecount);
         vector_std_remove_averages.push_back(remove_times_vecotr_std / Samplecount);
 
-
+        system("CLS");
 
 
     }
 
-
+    
     // Write results to CSV file
     std::string fileName = "PerformanceResults";
     std::ofstream csv_file(fileName + ".csv");
