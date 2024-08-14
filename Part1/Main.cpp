@@ -69,9 +69,9 @@ int main() {
             std::vector<LargeObject> t3(size_count.y, LargeObject(size_count.x));
             Timer timer;
 
-
+            LargeObject th(size_count.x);
             timer.start();
-            t1.Insert(0, LargeObject(size_count.x));
+            t1.Insert(0, th );
             timer.stop();
             insert_times_vector += timer.milliseconds();
 
@@ -82,7 +82,7 @@ int main() {
 
 
             timer.start();
-            t2.Insert(0, LargeObject(size_count.x));
+            t2.Insert(0, th );
             timer.stop();
             insert_times_vectorPointer += timer.milliseconds();
 
@@ -92,7 +92,7 @@ int main() {
             remove_times_vecotrPointer += timer.milliseconds();
 
             timer.start();
-            t3.insert(t3.begin(), LargeObject(size_count.x));
+            t3.insert(t3.begin(), th);
             timer.stop();
             insert_times_vector_std += timer.milliseconds();
 

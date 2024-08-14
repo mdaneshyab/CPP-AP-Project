@@ -112,7 +112,7 @@ public:
     }
 
     // Insert an element at a specific position
-    void Insert(unsigned int index, T& value = T()) {
+    void Insert(unsigned int index,const T& value = T()) {
         if (index >= m_size) {
             throw std::out_of_range("Index out of bounds");
         }
