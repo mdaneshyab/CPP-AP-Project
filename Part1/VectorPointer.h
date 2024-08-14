@@ -106,14 +106,14 @@ public:
     }
 
     // Add an element at the end
-    void PushBack(T value) {
+    void PushBack(T& value) {
         Resize(m_size + 1);
         m_data[m_size - 1] = new T(value);
     }
 
     // Insert an element at a specific position
-    void Insert(unsigned int index, T value = T()) {
-        if (index > m_size) {
+    void Insert(unsigned int index, T& value = T()) {
+        if (index >= m_size) {
             throw std::out_of_range("Index out of bounds");
         }
         Resize(m_size + 1);
@@ -121,7 +121,7 @@ public:
             m_data[i] = m_data[i - 1];
         }
         
-        m_data[index] = new T(value);
+        m_data[index] =  new T(value);
     }
 
     // Remove an element at a specific position
