@@ -108,7 +108,7 @@ public:
     // Add an element at the end
     void PushBack(T value) {
         Resize(m_size + 1);
-        *m_data[m_size - 1] = new T(value);
+        m_data[m_size - 1] = new T(value);
     }
 
     // Insert an element at a specific position
@@ -120,7 +120,8 @@ public:
         for (size_t i = m_size - 1; i > index; --i) {
             m_data[i] = m_data[i - 1];
         }
-        m_data[index] =new T(value);
+        
+        m_data[index] = new T(value);
     }
 
     // Remove an element at a specific position
