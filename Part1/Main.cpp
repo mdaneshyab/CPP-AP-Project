@@ -2,7 +2,6 @@
 #include <fstream>
 #include <vector>
 #include <stdexcept>
-
 #include "Vector.h"
 #include "VectorPointer.h"
 #include "Timer.h"

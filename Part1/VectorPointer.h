@@ -117,6 +117,7 @@ public:
             throw std::out_of_range("Index out of bounds");
         }
         Resize(m_size + 1);
+        delete m_data[m_size - 1];
         for (size_t i = m_size - 1; i > index; --i) {
             m_data[i] = m_data[i - 1];
         }
