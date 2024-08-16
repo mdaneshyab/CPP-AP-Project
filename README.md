@@ -21,6 +21,10 @@ In this part I just made a Device class that holds two vectors of shapes and its
 
 ***
 ## Compile
+The code could compile in g++ and MSVC.
 if you don't want to compile but you want to test you could download this releases
-"link of release"
+
+[Part1.exe](https://github.com/mdaneshyab/CPP-AP-Project/releases/download/v1.0.0/Part1.exe)
+[Part2.exe](https://github.com/mdaneshyab/CPP-AP-Project/releases/download/v1.0.0/Part2.exe)
+
 
