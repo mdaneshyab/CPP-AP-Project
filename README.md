@@ -2,11 +2,25 @@
 
 ***
 ## Part 1 
-This part compair two vector class. They are using two methods for making the vector class.One use single pointer (T*) and the other use double pointer. I test both of them and the result are this.
+This part compair two vector class. They are using two methods for making the vector class. One use single pointer (T*) and the other use double pointer(T**). I test both of them and compair them to std::vector from c++ compiler.
+
+![MainResults](Results/MainResults.png)
 
 
-You can observe that VectorPointer class is faster. I think that because of lower size of pointer instead of the whole object.My every test case are about 100 MB. they began with 100 * 1mb object  and end with 2* 50MB object. In every test I use insert at index 0 (because it cause run a for loop for whole class!) and remove the the index 0 after that. I did it 10 times for every case and avrage the time took every try. The graphs are the resultes of this tests.
+I test them with 100\*1MB objects to 2\*50MB objects. The vector allways is 100 MB. As you could see the winner is std::vector and Vector with double pointer is close to it. But the Vector with single pointer is farway from them.
 
+![VectorVsVectorPointer](Results/VectorVsVectorPointer.png)
+A close look at the grpahs shows us the speed of vector with (T\*) is more dependent on counts but the vector with (T**) is dependent on object size.
+
+![VectorPointerVsSTD_results](Results/VectorPointerVsSTD_results.png)
+In this results we could see the Vector pointer sometime is even faster than std::vector but the std::vector is faster in totaly. I think it becasue of capacity that use and alocata more memory. in the cases that capacity filled up it is slower.
 ***
 ## Part 2
+
+In this part I just made a Device class that holds two vectors of shapes and itself. I make oprator<< function for every thing. You could test it by yourself. (A main sample located in Part2 folder).
+
+***
+## Compile
+if you don't want to compile but you want to test you could download this releases
+"link of release"
 
