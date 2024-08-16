@@ -41,7 +41,7 @@ The benchmarks were conducted using objects of varying sizes, from 100 \* 1MB ob
 
 ---
 
-## Part 2: Device Class with Custom Vectors
+## Part 2: Device Class
 
 In the second part, a `Device` class is implemented. This class models a realistic device, consisting of several shape objects as well as other sub-devices. The `Device` class and its components are designed to represent the complex structure of real-world objects, like an automobile with various parts, both simple and complex.
 
