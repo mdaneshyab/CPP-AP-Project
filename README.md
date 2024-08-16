@@ -4,7 +4,9 @@
 
 ## Overview
 
-This repository contains two parts that explore and compare different implementations of a vector class in C++. The goal is to evaluate the performance of these custom implementations against the standard C++ `std::vector`.
+This repository contains a C++ project structured in two main parts, each focusing on different aspects of custom data structures and object-oriented design. The first part explores the implementation and performance comparison of custom vector classes against the standard C++ `std::vector`. The second part involves the creation of a complex `Device` class, which models real-world objects by aggregating various shapes and sub-devices, each with their own geometric and physical properties.
+
+The project emphasizes efficient memory management, performance benchmarking, and the practical application of object-oriented principles in C++.
 
 ---
 
@@ -36,14 +38,30 @@ The benchmarks were conducted using objects of varying sizes, from 100 \* 1MB ob
 
 ![Vector Pointer Vs STD Results](Results/VectorPointerVsSTD_results.png)
 
+
 ---
 
 ## Part 2: Device Class with Custom Vectors
 
-In the second part, a `Device` class is implemented. This class holds two vectors of shapes, as well as the device itself.
+In the second part, a `Device` class is implemented. This class models a realistic device, consisting of several shape objects as well as other sub-devices. The `Device` class and its components are designed to represent the complex structure of real-world objects, like an automobile with various parts, both simple and complex.
 
-- A custom `operator<<` function is implemented for the `Device` class and associated objects.
-- You can experiment with this implementation by running the sample code provided in the `Part2` folder.
+### Functionalities
+
+The `Device` class includes the following key functionalities:
+
+- **AddShape**: Adds a shape to the device.
+- **AddSubDevice**: Adds a sub-device to the device.
+- **GetVolume**: Returns the total volume of the device, including all shapes and sub-devices. The volume is calculated by invoking the `EvalVolume` function whenever any shape's dimensions are modified using the `Set` functions.
+- **GetSurfaceArea**: Returns the total surface area of the device, including all shapes and sub-devices. The surface area is calculated by invoking the `EvalSurfaceArea` function whenever any shape's dimensions are modified.
+- **GetMass**: Returns the total mass of the device, including all shapes and sub-devices. The mass is calculated by invoking the `EvalMass` function whenever any shape's density or volume is modified.
+
+### Shape Classes
+
+The `Shape` class and its derived classes (`Cube`, `Sphere`, `Cylinder`, `Pyramid`) include methods to calculate volume, surface area, and mass based on the shape's dimensions and density. These calculations are done via `Eval` functions, which are triggered whenever relevant properties are set or changed.
+
+Additionally, a custom `operator<<` function is implemented to provide detailed output about the device and its components.
+
+You can experiment with this implementation by running the sample code provided in the `Part2` folder.
 
 ---
 
