@@ -5,7 +5,7 @@
 #include "Vector.h"
 #include "VectorPointer.h"
 #include "Timer.h"
-#define Samplecount  10
+#define Samplecount  50
 #define ArrayTotalSize  100 // in MB
 
 
@@ -15,12 +15,12 @@ struct LargeObject {
     LargeObject(size_t size_in_mb = 1) : data(size_in_mb * 1024 * 1024) {}
 };
 
-// Struct to hold object  pairs
+// Struct to hold object pairs
 struct vec2 {
     int x;
     int y;
 };
-
+// Function to draw loading bar
 void ShowBar(int length, double percent)
 {
     std::cout << '\r' << '|';
@@ -49,7 +49,7 @@ int main() {
     std::vector<double> vector_pointer_remove_averages;
     std::vector<double> vector_std_insert_averages;
     std::vector<double> vector_std_remove_averages;
-
+    // Run test cases
     for (const auto& size_count : sizes_and_counts) {
 
         double insert_times_vector = 0;
@@ -140,9 +140,9 @@ int main() {
     }
 
     csv_file.close();
-    std::cout << "Performance results written to PerformanceResults1" << fileName << ".csv\n";
+    std::cout << "Performance results written to " << fileName << ".csv\n";
 
 
-
+    std::getchar();
     return 0;
 }
